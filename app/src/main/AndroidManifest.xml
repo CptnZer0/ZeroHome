@@ -11,7 +11,7 @@
     </queries>
 
     <application
-        android:label="TV Home"
+        android:label="Zero Home"
         android:icon="@drawable/ic_home"
         android:banner="@drawable/ic_home"
         android:theme="@android:style/Theme.Material.NoActionBar.Fullscreen"
@@ -37,7 +37,7 @@
         <service
             android:name=".HomeKeyService"
             android:exported="false"
-            android:label="TV Home: Home button"
+            android:label="Zero Home: Home button"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
             <intent-filter>
                 <action android:name="android.accessibilityservice.AccessibilityService" />

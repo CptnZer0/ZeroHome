@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="service_desc">Opens TV Home when you press Home, and stops the stock launcher in the background to save memory. It reads only window changes and the Home key.</string>
+    <string name="service_desc">Opens Zero Home when you press Home, and briefly covers the screen with a picture of Zero Home while the firmware\'s own launcher loads. It reads only window changes and the Home key.</string>
 </resources>

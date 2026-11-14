@@ -20,11 +20,11 @@ import java.util.List;
 /**
  * This TV's firmware ignores the chosen default Home app and always opens its own launcher on Home.
  * It also makes Android hold back our launch ("Activity start request ... stopped") until the stock
- * launcher has appeared, about 2.5 s. So on Home we cover the screen at once with a picture of TV Home,
- * start TV Home (it comes up when allowed), and lift the cover when it is really on screen.
+ * launcher has appeared, about 2.5 s. So on Home we cover the screen at once with a picture of Zero Home,
+ * start Zero Home (it comes up when allowed), and lift the cover when it is really on screen.
  */
 public class HomeKeyService extends AccessibilityService {
-    /** Last picture of the TV Home screen, taken by MainActivity when it goes to the background. */
+    /** Last picture of the Zero Home screen, taken by MainActivity when it goes to the background. */
     static Bitmap snapshot;
     private static HomeKeyService running;
 
@@ -127,7 +127,7 @@ public class HomeKeyService extends AccessibilityService {
         try {
             ((WindowManager) getSystemService(WINDOW_SERVICE)).addView(v, lp);
             cover = v;
-            // Never leave the screen covered if TV Home fails to come up.
+            // Never leave the screen covered if Zero Home fails to come up.
             handler.removeCallbacks(hide);
             handler.postDelayed(hide, 9000); // Android's hold on our launch can last about 5 s after the release
         } catch (RuntimeException ignored) {
