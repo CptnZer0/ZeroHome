@@ -62,4 +62,6 @@ The APK is in `app/build/outputs/apk/debug/`. Release APKs are signed with a deb
 
 ## Credits
 
+Zero Home is MIT licensed (see `LICENSE`).
+
 Font: [Poppins](https://github.com/itfoundry/Poppins), SIL Open Font License (see `OFL-Poppins.txt`). Icons: Material icons shapes (Apache 2.0).
