@@ -28,6 +28,12 @@ adb -s 192.168.1.22:5555 shell settings put secure enabled_accessibility_service
 
 Never disable the stock launcher (`cn.cultraview.launcher.technical.open`): the TV hangs on its boot logo.
 
+## Why Home works the way it does
+
+On Home, this firmware opens its own launcher (on key release) and makes Android hold back any normal app's launch for about 5 s
+(`Activity start request ... stopped` in logcat). No app can skip that without root. So TV Home covers the screen at once with a
+picture of itself, keeps the cover up until TV Home is really back, then lifts it. The stock launcher is left loaded so it starts fast.
+
 ## Use
 
 - OK opens an app. Hold OK to move it left or right, or hide it. The + tile shows hidden apps again.

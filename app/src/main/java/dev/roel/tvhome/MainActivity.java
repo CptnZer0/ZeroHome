@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
@@ -71,9 +73,26 @@ public class MainActivity extends Activity {
         updateRam();
         handler.postDelayed(() -> {
             if (prefs.getBoolean("autoClean", true)) clearCached();
-            else HomeKeyService.stopInBackground(this, HomeKeyService.otherHomes(this));
             updateRam();
         }, 4000); // the app you just left needs a few seconds to count as "background"
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // Picture of this screen, shown as a cover on the next Home press (see HomeKeyService).
+        View root = getWindow().getDecorView();
+        if (root.getWidth() > 0) {
+            Bitmap b = Bitmap.createBitmap(root.getWidth(), root.getHeight(), Bitmap.Config.RGB_565);
+            root.draw(new Canvas(b));
+            HomeKeyService.snapshot = b;
+        }
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        HomeKeyService.homeFocus(hasFocus);
     }
 
     @Override
@@ -339,11 +358,13 @@ public class MainActivity extends Activity {
         else Toast.makeText(this, "No advanced settings app found", Toast.LENGTH_SHORT).show();
     }
 
-    /** Stops apps waiting in the background (never Spotify). Playing music is protected by Android anyway. */
+    /**
+     * Stops apps waiting in the background (never Spotify; playing music is protected anyway).
+     * The stock launcher is not in `apps`, so it stays loaded and Home stays fast.
+     */
     private void clearCached() {
         List<String> pkgs = new ArrayList<>(apps.keySet());
         pkgs.remove(KEEP_RUNNING);
-        pkgs.addAll(HomeKeyService.otherHomes(this));
         HomeKeyService.stopInBackground(this, pkgs);
     }
 
