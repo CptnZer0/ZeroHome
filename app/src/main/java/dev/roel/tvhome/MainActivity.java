@@ -43,6 +43,8 @@ public class MainActivity extends Activity {
     private static final ComponentName TV_INPUT = new ComponentName("com.hisilicon.tvui", "com.hisilicon.tvui.play.MainActivity");
     private static final ComponentName ACCOUNT = new ComponentName("com.cultraview.hictvsetting", "com.cultraview.hictvsetting.activity.GoogleAccountManagerActivity");
 
+    private static final String KEEP_RUNNING = "com.spotify.tv.android";
+
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final Map<String, ResolveInfo> apps = new HashMap<>();
     private List<String> order = new ArrayList<>();
@@ -67,7 +69,11 @@ public class MainActivity extends Activity {
         super.onResume();
         loadApps();
         updateRam();
-        handler.postDelayed(() -> HomeKeyService.stopInBackground(this, HomeKeyService.otherHomes(this)), 1500);
+        handler.postDelayed(() -> {
+            if (prefs.getBoolean("autoClean", true)) clearCached();
+            else HomeKeyService.stopInBackground(this, HomeKeyService.otherHomes(this));
+            updateRam();
+        }, 4000); // the app you just left needs a few seconds to count as "background"
     }
 
     @Override
@@ -143,7 +149,12 @@ public class MainActivity extends Activity {
             return true;
         }));
         bar.addView(topButton(R.drawable.ic_account, "Account", v -> open(new Intent().setComponent(ACCOUNT)), null));
-        View ram = topButton(R.drawable.ic_memory, "RAM", v -> cleanRam(), null);
+        View ram = topButton(R.drawable.ic_memory, "RAM", v -> cleanRam(), v -> {
+            boolean on = !prefs.getBoolean("autoClean", true);
+            prefs.edit().putBoolean("autoClean", on).apply();
+            Toast.makeText(this, on ? "Auto-clean on Home: ON" : "Auto-clean on Home: OFF", Toast.LENGTH_SHORT).show();
+            return true;
+        });
         ramText = (TextView) ((ViewGroup) ram).getChildAt(1);
         bar.addView(ram);
         // Stop focus at the ends of the bar instead of jumping into the app row.
@@ -328,12 +339,17 @@ public class MainActivity extends Activity {
         else Toast.makeText(this, "No advanced settings app found", Toast.LENGTH_SHORT).show();
     }
 
+    /** Stops apps waiting in the background (never Spotify). Playing music is protected by Android anyway. */
+    private void clearCached() {
+        List<String> pkgs = new ArrayList<>(apps.keySet());
+        pkgs.remove(KEEP_RUNNING);
+        pkgs.addAll(HomeKeyService.otherHomes(this));
+        HomeKeyService.stopInBackground(this, pkgs);
+    }
+
     private void cleanRam() {
         long before = freeMb();
-        ActivityManager am = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
-        // Only stops apps sitting in the background; music that is playing keeps going.
-        for (String p : apps.keySet()) am.killBackgroundProcesses(p);
-        HomeKeyService.stopInBackground(this, HomeKeyService.otherHomes(this));
+        clearCached();
         handler.postDelayed(() -> {
             long after = freeMb();
             updateRam();

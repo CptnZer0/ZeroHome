@@ -32,7 +32,8 @@ Never disable the stock launcher (`cn.cultraview.launcher.technical.open`): the 
 
 - OK opens an app. Hold OK to move it left or right, or hide it. The + tile shows hidden apps again.
 - Hold OK on Settings to open tvfactory (ADB settings), or Activity Launcher if tvfactory has no icon.
-- RAM shows memory available. Press it to stop apps waiting in the background.
+- RAM shows memory available. Press it to stop apps waiting in the background (never Spotify).
+- Auto-clean: 4 seconds after you come Home, the same clean runs by itself. Hold OK on RAM to turn it on or off (on by default).
 
 ## Credits
 
