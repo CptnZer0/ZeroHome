@@ -22,8 +22,8 @@ android {
         }
         create("full") {
             dimension = "edition"
-            versionCode = 200
-            versionName = "2.0.0"
+            versionCode = 201
+            versionName = "2.0.1"
         }
     }
 

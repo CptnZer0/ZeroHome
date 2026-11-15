@@ -25,6 +25,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -78,6 +79,7 @@ public class MainActivity extends Activity {
     private FrameLayout idle;
     private String focusKey; // "row:pkg" of the tile to focus again after a redraw
     private View firstTile;
+    private float unit = 1f; // pixels per layout unit, see onCreate
 
     private final Runnable applyGlow = this::fadeGlow;
     private final Runnable goIdle = this::showIdle;
@@ -101,6 +103,9 @@ public class MainActivity extends Activity {
         regular = getResources().getFont(R.font.poppins_regular);
         medium = getResources().getFont(R.font.poppins_medium);
         semibold = getResources().getFont(R.font.poppins_semibold);
+        // Lay out as if the screen were 960 units wide, so every TV looks the same whatever density its firmware reports.
+        DisplayMetrics m = getResources().getDisplayMetrics();
+        unit = Math.max(m.widthPixels, m.heightPixels) / 960f;
         setContentView(buildScreen());
     }
 
@@ -687,7 +692,7 @@ public class MainActivity extends Activity {
     }
 
     private void style(TextView t, int sp, int color, Typeface tf) {
-        t.setTextSize(TypedValue.COMPLEX_UNIT_SP, sp);
+        t.setTextSize(TypedValue.COMPLEX_UNIT_PX, sp * unit);
         t.setTextColor(color);
         t.setTypeface(tf);
     }
@@ -704,6 +709,6 @@ public class MainActivity extends Activity {
     }
 
     private int dp(int v) {
-        return Math.round(v * getResources().getDisplayMetrics().density);
+        return Math.round(v * unit);
     }
 }
