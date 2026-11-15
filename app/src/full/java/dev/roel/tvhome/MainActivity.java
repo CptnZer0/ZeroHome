@@ -169,7 +169,6 @@ public class MainActivity extends Activity {
         LinearLayout page = new LinearLayout(this);
         page.setOrientation(LinearLayout.VERTICAL);
         page.setPadding(dp(40), dp(24), dp(40), dp(16));
-        page.setClipChildren(false);
         page.addView(buildTopBar(), new LinearLayout.LayoutParams(-1, -2));
 
         LinearLayout title = new LinearLayout(this);
