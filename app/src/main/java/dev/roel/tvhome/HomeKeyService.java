@@ -44,6 +44,16 @@ public class HomeKeyService extends AccessibilityService {
         return out;
     }
 
+    /** Home screen activities by class name: a package like Settings can own a hidden Home screen too. */
+    static List<String> homeClasses(Context c) {
+        Intent home = new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME);
+        List<String> out = new ArrayList<>();
+        for (ResolveInfo r : c.getPackageManager().queryIntentActivities(home, 0)) {
+            if (!r.activityInfo.packageName.equals(c.getPackageName())) out.add(r.activityInfo.name);
+        }
+        return out;
+    }
+
     static void stopInBackground(Context c, List<String> pkgs) {
         ActivityManager am = (ActivityManager) c.getSystemService(ACTIVITY_SERVICE);
         for (String p : pkgs) am.killBackgroundProcesses(p);
@@ -71,7 +81,7 @@ public class HomeKeyService extends AccessibilityService {
     @Override
     protected void onServiceConnected() {
         running = this;
-        stockHomes = otherHomes(this);
+        stockHomes = homeClasses(this);
     }
 
     @Override
@@ -99,7 +109,8 @@ public class HomeKeyService extends AccessibilityService {
     @Override
     public void onAccessibilityEvent(AccessibilityEvent e) {
         if (e.getEventType() != AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED || e.getPackageName() == null) return;
-        if (stockHomes.contains(e.getPackageName().toString())) {
+        // Match the screen, not the package: Settings is a package that also has a hidden Home screen.
+        if (e.getClassName() != null && stockHomes.contains(e.getClassName().toString())) {
             // Firmware launcher is up (under the cover). Ours returns when Android allows it; lift then.
             handler.removeCallbacks(releaseHold);
             holdCover = false;

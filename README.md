@@ -10,7 +10,7 @@ A light Home screen (launcher) for low-RAM Android TVs, built for TVs whose firm
 - No WebView, no libraries, plain Java. About 25 MB of RAM. Font: Poppins.
 
 Tested on an American Home (HiDPT / CultraView, HiSilicon) Android 9 TV with 476 MB RAM.
-The Input, Network, Settings and Account buttons open that firmware's screens. On other TVs they may show "Not available on this TV".
+Also tested on a Realme TV 32 (Android 11). Input tries the CultraView screen, then the standard Android TV Inputs panel, then Settings. The Account button only shows on CultraView TVs (elsewhere, accounts are inside Settings). If nothing opens, they show "Not available on this TV".
 
 ## Install
 

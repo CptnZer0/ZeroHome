@@ -160,14 +160,16 @@ public class MainActivity extends Activity {
         clock.addView(date);
         bar.addView(clock, new LinearLayout.LayoutParams(0, -2, 1));
 
-        View input = topButton(R.drawable.ic_input, "Input", v -> open(new Intent().setComponent(TV_INPUT)), null);
+        View input = topButton(R.drawable.ic_input, "Input", v -> open(new Intent().setComponent(TV_INPUT), new Intent("com.android.tv.action.VIEW_INPUTS"), new Intent(Settings.ACTION_SETTINGS)), null);
         bar.addView(input);
         bar.addView(topButton(R.drawable.ic_wifi, "Network", v -> open(new Intent(Settings.ACTION_WIFI_SETTINGS)), null));
         bar.addView(topButton(R.drawable.ic_settings, "Settings", v -> open(new Intent(Settings.ACTION_SETTINGS)), v -> {
             openAdvanced();
             return true;
         }));
-        bar.addView(topButton(R.drawable.ic_account, "Account", v -> open(new Intent().setComponent(ACCOUNT)), null));
+        // Only CultraView firmware has a screen to manage the signed-in account; elsewhere it lives inside Settings.
+        if (getPackageManager().resolveActivity(new Intent().setComponent(ACCOUNT), 0) != null)
+            bar.addView(topButton(R.drawable.ic_account, "Account", v -> open(new Intent().setComponent(ACCOUNT)), null));
         View ram = topButton(R.drawable.ic_memory, "RAM", v -> cleanRam(), v -> {
             boolean on = !prefs.getBoolean("autoClean", true);
             prefs.edit().putBoolean("autoClean", on).apply();
@@ -388,12 +390,16 @@ public class MainActivity extends Activity {
         return m.availMem / (1024 * 1024);
     }
 
-    private void open(Intent i) {
-        try {
-            startActivity(i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-        } catch (Exception e) { // ActivityNotFound or SecurityException on firmware screens
-            Toast.makeText(this, "Not available on this TV", Toast.LENGTH_SHORT).show();
+    /** Tries each intent in turn: the first one this TV can open wins (screens differ per brand). */
+    private void open(Intent... options) {
+        for (Intent i : options) {
+            try {
+                startActivity(i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                return;
+            } catch (Exception e) { // ActivityNotFound or SecurityException on firmware screens
+            }
         }
+        Toast.makeText(this, "Not available on this TV", Toast.LENGTH_SHORT).show();
     }
 
     // ---------- small helpers ----------
