@@ -10,8 +10,21 @@ android {
         applicationId = "dev.roel.tvhome"
         minSdk = 26
         targetSdk = 36
-        versionCode = 2
-        versionName = "1.0.1"
+    }
+
+    // Same package: full installs over lite (keeps settings, Home key service, default Home).
+    flavorDimensions += "edition"
+    productFlavors {
+        create("lite") {
+            dimension = "edition"
+            versionCode = 2
+            versionName = "1.0.1"
+        }
+        create("full") {
+            dimension = "edition"
+            versionCode = 200
+            versionName = "2.0.0"
+        }
     }
 
     compileOptions {

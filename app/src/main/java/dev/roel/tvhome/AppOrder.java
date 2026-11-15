@@ -29,4 +29,12 @@ final class AppOrder {
         out.set(j, pkg);
         return out;
     }
+
+    /** Puts pkg first in the recent list (no duplicates) and keeps at most max entries. */
+    static List<String> pushRecent(List<String> recent, String pkg, int max) {
+        List<String> out = new ArrayList<>(recent);
+        out.remove(pkg);
+        out.add(0, pkg);
+        return out.size() > max ? new ArrayList<>(out.subList(0, max)) : out;
+    }
 }

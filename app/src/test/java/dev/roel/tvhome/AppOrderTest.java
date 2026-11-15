@@ -24,4 +24,11 @@ public class AppOrderTest {
         assertEquals(order, AppOrder.move(order, "c", 1));
         assertEquals(order, AppOrder.move(order, "missing", 1));
     }
+
+    @Test
+    public void recentPutsNewestFirstWithoutDuplicatesAndCaps() {
+        List<String> recent = Arrays.asList("a", "b", "c");
+        assertEquals(Arrays.asList("b", "a", "c"), AppOrder.pushRecent(recent, "b", 3));
+        assertEquals(Arrays.asList("d", "a", "b"), AppOrder.pushRecent(recent, "d", 3));
+    }
 }
