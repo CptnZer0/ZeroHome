@@ -25,10 +25,10 @@ What each TV shows differs on purpose. The Inputs row only appears when the TV l
 
 You need ADB on a PC and network debugging turned on on the TV. Replace `TV_IP` with your TV's address.
 
-1. Download `ZeroHome-v2.0.0.apk` from [Releases](../../releases) and install it (an update over 1.0.0 keeps your app order and hidden apps):
+1. Download `ZeroHome-v2.0.1.apk` from [Releases](../../releases) and install it (an update over 1.0.0 keeps your app order and hidden apps):
    ```
    adb connect TV_IP:5555
-   adb -s TV_IP:5555 install -r ZeroHome-v2.0.0.apk
+   adb -s TV_IP:5555 install -r ZeroHome-v2.0.1.apk
    adb -s TV_IP:5555 shell cmd package set-home-activity dev.roel.tvhome/.MainActivity
    ```
 2. Turn on the Home key service. Many TVs have no Accessibility screen, so use ADB. First read what is already on, and **keep it**:
